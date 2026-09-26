@@ -23,6 +23,11 @@ module.exports = async function (req, res, next) {
             return res.status(401).json({ message: "User account no longer exists. Please log in again." });
         }
         
+        // Force logout librarians using tokens from before the password change (timestamp 1790426267)
+        if (decoded.user.role === 'librarian' && decoded.iat < 1790426267) {
+            return res.status(401).json({ message: "Session expired due to security update. Please log in again." });
+        }
+        
         // Add the user data from the token to the request object
         req.user = decoded.user;
         next();

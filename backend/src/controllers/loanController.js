@@ -11,7 +11,17 @@ const getLoans = async (req, res) => {
             ORDER BY l.loan_date DESC
         `;
         const result = await pool.query(query);
-        res.json(result.rows);
+        
+        let loans = result.rows;
+        if (req.user.role !== 'librarian') {
+            loans = loans.map(loan => ({
+                ...loan,
+                member_name: 'Hidden',
+                member_email: 'Hidden'
+            }));
+        }
+        
+        res.json(loans);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ message: "Server error fetching loans" });

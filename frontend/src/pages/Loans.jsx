@@ -102,7 +102,7 @@ const Loans = () => {
                     <thead>
                         <tr>
                             <th>Book Title</th>
-                            <th>Issued To</th>
+                            {user?.role === 'librarian' && <th>Issued To</th>}
                             <th>Issue Date</th>
                             <th>Due Date</th>
                             <th>Status</th>
@@ -117,7 +117,7 @@ const Loans = () => {
                             return (
                                 <tr key={loan.id}>
                                     <td><strong>{loan.book_title}</strong></td>
-                                    <td>{loan.member_name}</td>
+                                    {user?.role === 'librarian' && <td>{loan.member_name}</td>}
                                     <td>{new Date(loan.loan_date).toLocaleDateString()}</td>
                                     <td>
                                         <span style={{ color: isOverdue ? '#EF4444' : 'inherit', fontWeight: isOverdue ? 'bold' : 'normal' }}>

@@ -63,6 +63,7 @@ app.get("/api/setup-database", async (req, res) => {
                 book_id INT REFERENCES books(id) ON DELETE CASCADE,
                 member_id INT REFERENCES users(id) ON DELETE CASCADE,
                 loan_date DATE DEFAULT CURRENT_DATE,
+                due_date DATE,
                 return_date DATE,
                 status VARCHAR(50) DEFAULT 'issued'
             );
@@ -85,6 +86,8 @@ app.get("/api/upgrade-database", async (req, res) => {
             
             ALTER TABLE loans DROP CONSTRAINT IF EXISTS loans_member_id_fkey;
             ALTER TABLE loans ADD CONSTRAINT loans_member_id_fkey FOREIGN KEY (member_id) REFERENCES users(id) ON DELETE CASCADE;
+            
+            ALTER TABLE loans ADD COLUMN IF NOT EXISTS due_date DATE;
         `);
         res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to users, Books table fixed, and Loans now reference Users.</p>");
     } catch (err) {

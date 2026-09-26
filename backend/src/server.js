@@ -13,13 +13,11 @@ app.use(express.json());
 // Import Routes
 const authRoutes = require("./routes/authRoutes");
 const bookRoutes = require("./routes/bookRoutes");
-const memberRoutes = require("./routes/memberRoutes");
 const loanRoutes = require("./routes/loanRoutes");
 
 // Use Routes
 app.use("/api/auth", authRoutes);
 app.use("/api/books", bookRoutes);
-app.use("/api/members", memberRoutes);
 app.use("/api/loans", loanRoutes);
 
 app.get("/", (req, res) => {
@@ -51,13 +49,6 @@ app.get("/api/setup-database", async (req, res) => {
                 available_quantity INT DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
-            CREATE TABLE IF NOT EXISTS members (
-                id SERIAL PRIMARY KEY,
-                name VARCHAR(100) NOT NULL,
-                email VARCHAR(100) UNIQUE NOT NULL,
-                phone VARCHAR(20),
-                membership_date DATE DEFAULT CURRENT_DATE
-            );
             CREATE TABLE IF NOT EXISTS loans (
                 id SERIAL PRIMARY KEY,
                 book_id INT REFERENCES books(id) ON DELETE CASCADE,
@@ -88,6 +79,8 @@ app.get("/api/upgrade-database", async (req, res) => {
             ALTER TABLE loans ADD CONSTRAINT loans_member_id_fkey FOREIGN KEY (member_id) REFERENCES users(id) ON DELETE CASCADE;
             
             ALTER TABLE loans ADD COLUMN IF NOT EXISTS due_date DATE;
+            
+            DROP TABLE IF EXISTS members CASCADE;
         `);
         res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to users, Books table fixed, and Loans now reference Users.</p>");
     } catch (err) {

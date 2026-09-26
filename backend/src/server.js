@@ -28,6 +28,50 @@ app.get("/", (req, res) => {
     });
 });
 
+// TEMPORARY SETUP ROUTE TO CREATE TABLES
+app.get("/api/setup-database", async (req, res) => {
+    try {
+        const pool = require("./config/database");
+        await pool.query(`
+            CREATE TABLE IF NOT EXISTS users (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                password VARCHAR(255) NOT NULL,
+                role VARCHAR(50) DEFAULT 'member'
+            );
+            CREATE TABLE IF NOT EXISTS books (
+                id SERIAL PRIMARY KEY,
+                title VARCHAR(255) NOT NULL,
+                author VARCHAR(255) NOT NULL,
+                isbn VARCHAR(100) UNIQUE,
+                published_year INT,
+                available_quantity INT DEFAULT 1,
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+            );
+            CREATE TABLE IF NOT EXISTS members (
+                id SERIAL PRIMARY KEY,
+                name VARCHAR(100) NOT NULL,
+                email VARCHAR(100) UNIQUE NOT NULL,
+                phone VARCHAR(20),
+                membership_date DATE DEFAULT CURRENT_DATE
+            );
+            CREATE TABLE IF NOT EXISTS loans (
+                id SERIAL PRIMARY KEY,
+                book_id INT REFERENCES books(id) ON DELETE CASCADE,
+                member_id INT REFERENCES members(id) ON DELETE CASCADE,
+                loan_date DATE DEFAULT CURRENT_DATE,
+                return_date DATE,
+                status VARCHAR(50) DEFAULT 'issued'
+            );
+        `);
+        res.send("<h1>Database Tables Created Successfully! 🎉</h1><p>You can now close this tab and go back to Vercel to register as a librarian.</p>");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error creating tables: " + err.message);
+    }
+});
+
 const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {

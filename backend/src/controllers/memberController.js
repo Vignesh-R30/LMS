@@ -8,7 +8,7 @@ const getMembers = async (req, res) => {
     }
 
     try {
-        const result = await pool.query("SELECT * FROM members ORDER BY created_at DESC");
+        const result = await pool.query("SELECT * FROM members ORDER BY membership_date DESC, id DESC");
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);

@@ -136,4 +136,22 @@ const getOverdueBooks = async (req, res) => {
     }
 };
 
-module.exports = { getLoans, issueBook, returnBook, getOverdueBooks };
+// Get a specific user's loans
+const getMyLoans = async (req, res) => {
+    try {
+        const query = `
+            SELECT l.*, b.title as book_title
+            FROM loans l
+            JOIN books b ON l.book_id = b.id
+            WHERE l.member_id = $1 AND l.status = 'issued'
+            ORDER BY l.loan_date DESC
+        `;
+        const result = await pool.query(query, [req.user.id]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Server error fetching your loans" });
+    }
+};
+
+module.exports = { getLoans, issueBook, returnBook, getOverdueBooks, getMyLoans };

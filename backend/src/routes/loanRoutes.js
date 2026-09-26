@@ -1,10 +1,13 @@
 const express = require("express");
 const router = express.Router();
 const authMiddleware = require("../middleware/authMiddleware");
-const { getLoans, issueBook, returnBook, getOverdueBooks } = require("../controllers/loanController");
+const { getLoans, issueBook, returnBook, getOverdueBooks, getMyLoans } = require("../controllers/loanController");
 
 // Protect all loan routes
 router.use(authMiddleware);
+
+// GET /api/loans/my-loans
+router.get("/my-loans", getMyLoans);
 
 // GET /api/loans
 router.get("/", getLoans);

@@ -8,7 +8,7 @@ const getLoans = async (req, res) => {
             FROM loans l
             JOIN books b ON l.book_id = b.id
             JOIN users u ON l.member_id = u.id
-            ORDER BY l.issue_date DESC
+            ORDER BY l.loan_date DESC
         `;
         const result = await pool.query(query);
         res.json(result.rows);

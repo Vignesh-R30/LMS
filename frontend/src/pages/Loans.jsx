@@ -118,7 +118,7 @@ const Loans = () => {
                                 <tr key={loan.id}>
                                     <td><strong>{loan.book_title}</strong></td>
                                     <td>{loan.member_name}</td>
-                                    <td>{new Date(loan.issue_date).toLocaleDateString()}</td>
+                                    <td>{new Date(loan.loan_date).toLocaleDateString()}</td>
                                     <td>
                                         <span style={{ color: isOverdue ? '#EF4444' : 'inherit', fontWeight: isOverdue ? 'bold' : 'normal' }}>
                                             {new Date(loan.due_date).toLocaleDateString()}

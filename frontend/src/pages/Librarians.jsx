@@ -3,7 +3,7 @@ import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 import './Books.css'; 
 
-const Members = () => {
+const Librarians = () => {
     const [librarians, setLibrarians] = useState([]);
     const { user } = useContext(AuthContext);
 
@@ -65,4 +65,4 @@ const Members = () => {
     );
 };
 
-export default Members;
+export default Librarians;

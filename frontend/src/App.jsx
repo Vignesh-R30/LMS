@@ -6,7 +6,7 @@ import Register from './pages/Register';
 import DashboardLayout from './pages/DashboardLayout';
 import Home from './pages/Home';
 import Books from './pages/Books';
-import Members from './pages/Members';
+import Librarians from './pages/Librarians';
 import Loans from './pages/Loans';
 import Students from './pages/Students';
 
@@ -35,7 +35,7 @@ function App() {
       }>
         <Route index element={<Home />} />
         <Route path="books" element={<Books />} />
-        <Route path="members" element={<Members />} />
+        <Route path="librarians" element={<Librarians />} />
         <Route path="loans" element={<Loans />} />
         <Route path="students" element={<Students />} />
       </Route>

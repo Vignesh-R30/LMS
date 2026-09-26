@@ -101,7 +101,7 @@ const Members = () => {
                                 <td><strong>{member.name}</strong></td>
                                 <td>{member.email}</td>
                                 <td>{member.phone}</td>
-                                <td>{member.membership_date ? new Date(member.membership_date).toLocaleDateString() : new Date().toLocaleDateString()}</td>
+                                <td>{member.membership_date ? String(member.membership_date).substring(0, 10) : 'N/A'}</td>
                                 <td>
                                     <button className="delete-button" onClick={() => handleDelete(member.id)}>Remove</button>
                                 </td>

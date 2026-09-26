@@ -21,7 +21,7 @@ const Loans = () => {
             const [loansRes, booksRes, membersRes] = await Promise.all([
                 api.get('/loans'),
                 api.get('/books'),
-                api.get('/members')
+                api.get('/auth/users/member')
             ]);
             setLoans(loansRes.data);
             setBooks(booksRes.data);

@@ -61,7 +61,7 @@ app.get("/api/setup-database", async (req, res) => {
             CREATE TABLE IF NOT EXISTS loans (
                 id SERIAL PRIMARY KEY,
                 book_id INT REFERENCES books(id) ON DELETE CASCADE,
-                member_id INT REFERENCES members(id) ON DELETE CASCADE,
+                member_id INT REFERENCES users(id) ON DELETE CASCADE,
                 loan_date DATE DEFAULT CURRENT_DATE,
                 return_date DATE,
                 status VARCHAR(50) DEFAULT 'issued'
@@ -82,8 +82,11 @@ app.get("/api/upgrade-database", async (req, res) => {
             ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
             ALTER TABLE books ADD COLUMN IF NOT EXISTS category VARCHAR(100);
             ALTER TABLE books ADD COLUMN IF NOT EXISTS quantity INT DEFAULT 1;
+            
+            ALTER TABLE loans DROP CONSTRAINT IF EXISTS loans_member_id_fkey;
+            ALTER TABLE loans ADD CONSTRAINT loans_member_id_fkey FOREIGN KEY (member_id) REFERENCES users(id) ON DELETE CASCADE;
         `);
-        res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to users, and the Books table has been fixed.</p>");
+        res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to users, Books table fixed, and Loans now reference Users.</p>");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error upgrading tables: " + err.message);

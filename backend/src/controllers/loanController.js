@@ -4,10 +4,10 @@ const pool = require("../config/database");
 const getLoans = async (req, res) => {
     try {
         const query = `
-            SELECT l.*, b.title as book_title, m.name as member_name, m.email as member_email
+            SELECT l.*, b.title as book_title, u.name as member_name, u.email as member_email
             FROM loans l
             JOIN books b ON l.book_id = b.id
-            JOIN members m ON l.member_id = m.id
+            JOIN users u ON l.member_id = u.id
             ORDER BY l.issue_date DESC
         `;
         const result = await pool.query(query);
@@ -38,8 +38,8 @@ const issueBook = async (req, res) => {
             return res.status(400).json({ message: "Book is currently out of stock" });
         }
 
-        // 2. Check if member exists
-        const memberResult = await pool.query("SELECT * FROM members WHERE id = $1", [member_id]);
+        // 2. Check if user (member) exists
+        const memberResult = await pool.query("SELECT * FROM users WHERE id = $1 AND role = 'member'", [member_id]);
         if (memberResult.rows.length === 0) {
             return res.status(404).json({ message: "Member not found" });
         }
@@ -121,10 +121,10 @@ const getOverdueBooks = async (req, res) => {
 
     try {
         const query = `
-            SELECT l.*, b.title as book_title, m.name as member_name, m.email as member_email
+            SELECT l.*, b.title as book_title, u.name as member_name, u.email as member_email
             FROM loans l
             JOIN books b ON l.book_id = b.id
-            JOIN members m ON l.member_id = m.id
+            JOIN users u ON l.member_id = u.id
             WHERE l.status = 'issued' AND l.due_date < CURRENT_DATE
             ORDER BY l.due_date ASC
         `;

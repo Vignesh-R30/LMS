@@ -186,6 +186,10 @@ Install dependencies:
 
 npm.cmd install
 
+Install routing and API tools:
+
+npm.cmd install react-router-dom axios
+
 Start the frontend:
 
 npm.cmd run dev

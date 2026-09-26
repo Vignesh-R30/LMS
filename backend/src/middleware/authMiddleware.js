@@ -1,6 +1,7 @@
 const jwt = require("jsonwebtoken");
+const pool = require("../config/database");
 
-module.exports = function (req, res, next) {
+module.exports = async function (req, res, next) {
     // Get token from header (usually sent as 'Bearer <token>')
     const tokenHeader = req.header("Authorization");
 
@@ -15,6 +16,12 @@ module.exports = function (req, res, next) {
         
         // Verify token against our secret key
         const decoded = jwt.verify(token, process.env.JWT_SECRET);
+        
+        // Verify the user still exists in the database
+        const userResult = await pool.query("SELECT id FROM users WHERE id = $1", [decoded.user.id]);
+        if (userResult.rows.length === 0) {
+            return res.status(401).json({ message: "User account no longer exists. Please log in again." });
+        }
         
         // Add the user data from the token to the request object
         req.user = decoded.user;

@@ -14,4 +14,17 @@ api.interceptors.request.use((config) => {
     return config;
 });
 
+// Automatically log out if the backend says the token is invalid or the user is deleted
+api.interceptors.response.use(
+    (response) => response,
+    (error) => {
+        if (error.response && error.response.status === 401) {
+            localStorage.removeItem('token');
+            localStorage.removeItem('user');
+            window.location.href = '/';
+        }
+        return Promise.reject(error);
+    }
+);
+
 export default api;

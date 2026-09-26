@@ -38,14 +38,29 @@ const Home = () => {
                         <h3 style={{ color: '#EAB308', marginBottom: '15px' }}>Current Issued Books</h3>
                         <ul style={{ listStyleType: 'none', padding: 0 }}>
                             {myLoans.map(loan => {
-                                const isOverdue = new Date(loan.due_date) < new Date();
+                                const today = new Date();
+                                today.setHours(0, 0, 0, 0); // Reset time for accurate day comparison
+                                
+                                const dueDate = new Date(loan.due_date);
+                                dueDate.setHours(0, 0, 0, 0);
+                                
+                                const diffTime = dueDate - today;
+                                const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                                
+                                const isOverdue = diffDays < 0;
+                                const isDueSoon = diffDays >= 0 && diffDays <= 3;
+
+                                let borderColor = '#10B981'; // Green (Safe)
+                                if (isOverdue) borderColor = '#EF4444'; // Red (Overdue)
+                                else if (isDueSoon) borderColor = '#F97316'; // Orange (Due Soon)
+
                                 return (
                                     <li key={loan.id} style={{ 
                                         padding: '12px 15px', 
                                         background: 'rgba(0,0,0,0.2)', 
                                         marginBottom: '10px',
                                         borderRadius: '8px',
-                                        borderLeft: isOverdue ? '4px solid #EF4444' : '4px solid #EAB308',
+                                        borderLeft: `4px solid ${borderColor}`,
                                         display: 'flex',
                                         justifyContent: 'space-between',
                                         alignItems: 'center'
@@ -57,10 +72,11 @@ const Home = () => {
                                             </div>
                                         </div>
                                         <div style={{ textAlign: 'right', fontSize: '14px' }}>
-                                            <div style={{ color: isOverdue ? '#EF4444' : '#fff' }}>
+                                            <div style={{ color: isOverdue ? '#EF4444' : (isDueSoon ? '#F97316' : '#fff') }}>
                                                 Due: {new Date(loan.due_date).toLocaleDateString()}
                                             </div>
                                             {isOverdue && <strong style={{ color: '#EF4444', fontSize: '12px' }}>OVERDUE</strong>}
+                                            {isDueSoon && !isOverdue && <strong style={{ color: '#F97316', fontSize: '12px' }}>DUE IN {diffDays} {diffDays === 1 ? 'DAY' : 'DAYS'}</strong>}
                                         </div>
                                     </li>
                                 );

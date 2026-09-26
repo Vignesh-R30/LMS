@@ -93,4 +93,42 @@ const PORT = process.env.PORT || 5000;
 
 app.listen(PORT, () => {
     console.log(`Backend server running on http://localhost:${PORT}`);
+    
+    // Automatic Background Job: Return overdue books automatically
+    // Runs every 1 hour (3600000 ms)
+    setInterval(async () => {
+        try {
+            const pool = require("./config/database");
+            console.log("[Auto-Return Job] Checking for overdue books...");
+            
+            await pool.query('BEGIN');
+            
+            // 1. Mark overdue loans as returned and collect their book IDs
+            const returnedLoans = await pool.query(`
+                UPDATE loans
+                SET status = 'returned', return_date = CURRENT_DATE
+                WHERE status = 'issued' AND due_date <= CURRENT_DATE
+                RETURNING book_id
+            `);
+            
+            if (returnedLoans.rows.length > 0) {
+                // 2. Increment the available quantity for the returned books
+                for (const row of returnedLoans.rows) {
+                    await pool.query(
+                        "UPDATE books SET available_quantity = available_quantity + 1 WHERE id = $1",
+                        [row.book_id]
+                    );
+                }
+                console.log(`[Auto-Return Job] Automatically returned ${returnedLoans.rows.length} overdue books.`);
+            } else {
+                console.log("[Auto-Return Job] No overdue books found right now.");
+            }
+            
+            await pool.query('COMMIT');
+        } catch (err) {
+            console.error("[Auto-Return Job] Error:", err.message);
+            const pool = require("./config/database");
+            await pool.query('ROLLBACK');
+        }
+    }, 1000 * 60 * 60); // 1 hour
 });

@@ -3,18 +3,13 @@ const pool = require("../config/database");
 // Get all books (with optional search query)
 const getBooks = async (req, res) => {
     try {
-        const { search, category } = req.query;
+        const { search } = req.query;
         let query = "SELECT * FROM books WHERE 1=1";
         let queryParams = [];
 
         if (search) {
             queryParams.push(`%${search}%`);
             query += ` AND (title ILIKE $${queryParams.length} OR author ILIKE $${queryParams.length} OR isbn ILIKE $${queryParams.length} OR category ILIKE $${queryParams.length})`;
-        }
-        
-        if (category) {
-            queryParams.push(`%${category}%`);
-            query += ` AND category ILIKE $${queryParams.length}`;
         }
 
         query += " ORDER BY created_at DESC";

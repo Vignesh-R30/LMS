@@ -34,6 +34,7 @@ const Loans = () => {
 
     useEffect(() => {
         fetchData();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [user]);
 
     const handleIssueBook = async (e) => {

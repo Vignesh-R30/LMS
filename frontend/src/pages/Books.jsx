@@ -6,6 +6,7 @@ import './Books.css';
 const Books = () => {
     const [books, setBooks] = useState([]);
     const [search, setSearch] = useState('');
+    const [categorySearch, setCategorySearch] = useState('');
     const { user } = useContext(AuthContext);
 
     // Form state for adding new books
@@ -15,9 +16,9 @@ const Books = () => {
     });
 
     // Fetch books from the backend API
-    const fetchBooks = async (searchQuery = '') => {
+    const fetchBooks = async (searchQuery = '', categoryQuery = '') => {
         try {
-            const res = await api.get(`/books?search=${searchQuery}`);
+            const res = await api.get(`/books?search=${searchQuery}&category=${categoryQuery}`);
             setBooks(res.data);
         } catch (err) {
             console.error("Error fetching books", err);
@@ -31,7 +32,7 @@ const Books = () => {
 
     const handleSearch = (e) => {
         e.preventDefault();
-        fetchBooks(search);
+        fetchBooks(search, categorySearch);
     };
 
     const handleAddBook = async (e) => {
@@ -40,7 +41,7 @@ const Books = () => {
             await api.post('/books', formData);
             setShowForm(false);
             setFormData({ title: '', author: '', isbn: '', category: '', quantity: 1, read_link: '' });
-            fetchBooks(search); // Refresh the list after adding
+            fetchBooks(search, categorySearch); // Refresh the list after adding
         } catch (err) {
             alert(err.response?.data?.message || 'Error adding book');
         }
@@ -50,7 +51,7 @@ const Books = () => {
         if (!window.confirm("Are you sure you want to delete this book?")) return;
         try {
             await api.delete(`/books/${id}`);
-            fetchBooks(search); // Refresh the list after deleting
+            fetchBooks(search, categorySearch); // Refresh the list after deleting
         } catch (err) {
             alert(err.response?.data?.message || 'Error deleting book');
         }
@@ -93,9 +94,15 @@ const Books = () => {
                 <form onSubmit={handleSearch}>
                     <input 
                         type="text" 
-                        placeholder="Search books by title, author, category or ISBN..." 
+                        placeholder="Search books by title, author, or ISBN..." 
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
+                    />
+                    <input 
+                        type="text" 
+                        placeholder="Search by category..." 
+                        value={categorySearch}
+                        onChange={(e) => setCategorySearch(e.target.value)}
                     />
                     <button type="submit" className="secondary-button">Search</button>
                 </form>

@@ -14,6 +14,18 @@ const Home = () => {
         }
     }, [user]);
 
+    const handleReturnBook = async (loanId) => {
+        if (!window.confirm("Are you sure you want to return this book?")) return;
+        try {
+            await api.put(`/loans/${loanId}/return`);
+            setMyLoans(prev => prev.filter(loan => loan.id !== loanId));
+            alert("Book returned successfully");
+        } catch (err) {
+            console.error("Error returning book", err);
+            alert("Failed to return book. " + (err.response?.data?.message || ""));
+        }
+    };
+
     return (
         <div>
             <div className="page-header">
@@ -80,11 +92,25 @@ const Home = () => {
                                                     textDecoration: 'none',
                                                     borderRadius: '4px',
                                                     fontSize: '12px',
-                                                    fontWeight: 'bold'
+                                                    fontWeight: 'bold',
+                                                    marginRight: '8px'
                                                 }}>
                                                     📖 Read Book
                                                 </a>
                                             )}
+                                            <button onClick={() => handleReturnBook(loan.id)} style={{
+                                                marginTop: '8px',
+                                                padding: '4px 10px',
+                                                background: '#EF4444',
+                                                color: '#fff',
+                                                border: 'none',
+                                                borderRadius: '4px',
+                                                fontSize: '12px',
+                                                fontWeight: 'bold',
+                                                cursor: 'pointer'
+                                            }}>
+                                                ↩️ Return Book
+                                            </button>
                                         </div>
                                         <div style={{ textAlign: 'right', fontSize: '14px' }}>
                                             <div style={{ color: isOverdue ? '#EF4444' : (isDueSoon ? '#F97316' : '#fff') }}>

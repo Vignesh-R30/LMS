@@ -72,10 +72,6 @@ const issueBook = async (req, res) => {
 
 // Return a book
 const returnBook = async (req, res) => {
-    if (req.user.role !== 'librarian') {
-        return res.status(403).json({ message: "Access denied. Librarians only." });
-    }
-
     const { id } = req.params; // Loan ID
 
     try {
@@ -86,6 +82,11 @@ const returnBook = async (req, res) => {
         }
 
         const loan = loanResult.rows[0];
+
+        // 2. Check permissions: either librarian, or the member who owns the loan
+        if (req.user.role !== 'librarian' && req.user.id !== loan.member_id) {
+            return res.status(403).json({ message: "Access denied. You can only return your own books." });
+        }
 
         // Start transaction
         await pool.query('BEGIN');

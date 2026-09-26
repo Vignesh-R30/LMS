@@ -54,27 +54,33 @@ const issueBook = async (req, res) => {
             return res.status(404).json({ message: "Member not found" });
         }
 
-        // Start a database transaction
-        await pool.query('BEGIN');
+        const client = await pool.connect();
+        try {
+            // Start a database transaction
+            await client.query('BEGIN');
 
-        // 3. Create the loan record
-        const loanResult = await pool.query(
-            "INSERT INTO loans (book_id, member_id, due_date, status) VALUES ($1, $2, $3, 'issued') RETURNING *",
-            [book_id, member_id, due_date]
-        );
+            // 3. Create the loan record
+            const loanResult = await client.query(
+                "INSERT INTO loans (book_id, member_id, due_date, status) VALUES ($1, $2, $3, 'issued') RETURNING *",
+                [book_id, member_id, due_date]
+            );
 
-        // 4. Decrease the available quantity of the book
-        await pool.query(
-            "UPDATE books SET available_quantity = available_quantity - 1 WHERE id = $1",
-            [book_id]
-        );
+            // 4. Decrease the available quantity of the book
+            await client.query(
+                "UPDATE books SET available_quantity = available_quantity - 1 WHERE id = $1",
+                [book_id]
+            );
 
-        // Commit the transaction
-        await pool.query('COMMIT');
-
-        res.status(201).json({ message: "Book issued successfully", loan: loanResult.rows[0] });
+            // Commit the transaction
+            await client.query('COMMIT');
+            res.status(201).json({ message: "Book issued successfully", loan: loanResult.rows[0] });
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
+        } finally {
+            client.release();
+        }
     } catch (err) {
-        await pool.query('ROLLBACK');
         console.error(err.message);
         res.status(500).json({ message: "Server error issuing book" });
     }
@@ -98,27 +104,33 @@ const returnBook = async (req, res) => {
             return res.status(403).json({ message: "Access denied. You can only return your own books." });
         }
 
-        // Start transaction
-        await pool.query('BEGIN');
+        const client = await pool.connect();
+        try {
+            // Start transaction
+            await client.query('BEGIN');
 
-        // 2. Update the loan status to 'returned' and set return_date
-        const updatedLoan = await pool.query(
-            "UPDATE loans SET status = 'returned', return_date = CURRENT_DATE WHERE id = $1 RETURNING *",
-            [id]
-        );
+            // 2. Update the loan status to 'returned' and set return_date
+            const updatedLoan = await client.query(
+                "UPDATE loans SET status = 'returned', return_date = CURRENT_DATE WHERE id = $1 RETURNING *",
+                [id]
+            );
 
-        // 3. Increase the available quantity of the book
-        await pool.query(
-            "UPDATE books SET available_quantity = available_quantity + 1 WHERE id = $1",
-            [loan.book_id]
-        );
+            // 3. Increase the available quantity of the book
+            await client.query(
+                "UPDATE books SET available_quantity = available_quantity + 1 WHERE id = $1",
+                [loan.book_id]
+            );
 
-        // Commit transaction
-        await pool.query('COMMIT');
-
-        res.json({ message: "Book returned successfully", loan: updatedLoan.rows[0] });
+            // Commit transaction
+            await client.query('COMMIT');
+            res.json({ message: "Book returned successfully", loan: updatedLoan.rows[0] });
+        } catch (err) {
+            await client.query('ROLLBACK');
+            throw err;
+        } finally {
+            client.release();
+        }
     } catch (err) {
-        await pool.query('ROLLBACK');
         console.error(err.message);
         res.status(500).json({ message: "Server error returning book" });
     }

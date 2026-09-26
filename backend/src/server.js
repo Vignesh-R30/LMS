@@ -100,36 +100,42 @@ app.listen(PORT, () => {
     setInterval(async () => {
         try {
             const pool = require("./config/database");
-            console.log("[Auto-Return Job] Checking for overdue books...");
-            
-            await pool.query('BEGIN');
-            
-            // 1. Mark overdue loans as returned and collect their book IDs
-            const returnedLoans = await pool.query(`
-                UPDATE loans
-                SET status = 'returned', return_date = CURRENT_DATE
-                WHERE status = 'issued' AND due_date <= CURRENT_DATE
-                RETURNING book_id
-            `);
-            
-            if (returnedLoans.rows.length > 0) {
-                // 2. Increment the available quantity for the returned books
-                for (const row of returnedLoans.rows) {
-                    await pool.query(
-                        "UPDATE books SET available_quantity = available_quantity + 1 WHERE id = $1",
-                        [row.book_id]
-                    );
+            const client = await pool.connect();
+            try {
+                console.log("[Auto-Return Job] Checking for overdue books...");
+                
+                await client.query('BEGIN');
+                
+                // 1. Mark overdue loans as returned and collect their book IDs
+                const returnedLoans = await client.query(`
+                    UPDATE loans
+                    SET status = 'returned', return_date = CURRENT_DATE
+                    WHERE status = 'issued' AND due_date <= CURRENT_DATE
+                    RETURNING book_id
+                `);
+                
+                if (returnedLoans.rows.length > 0) {
+                    // 2. Increment the available quantity for the returned books
+                    for (const row of returnedLoans.rows) {
+                        await client.query(
+                            "UPDATE books SET available_quantity = available_quantity + 1 WHERE id = $1",
+                            [row.book_id]
+                        );
+                    }
+                    console.log(`[Auto-Return Job] Automatically returned ${returnedLoans.rows.length} overdue books.`);
+                } else {
+                    console.log("[Auto-Return Job] No overdue books found right now.");
                 }
-                console.log(`[Auto-Return Job] Automatically returned ${returnedLoans.rows.length} overdue books.`);
-            } else {
-                console.log("[Auto-Return Job] No overdue books found right now.");
+                
+                await client.query('COMMIT');
+            } catch (err) {
+                await client.query('ROLLBACK');
+                throw err;
+            } finally {
+                client.release();
             }
-            
-            await pool.query('COMMIT');
         } catch (err) {
             console.error("[Auto-Return Job] Error:", err.message);
-            const pool = require("./config/database");
-            await pool.query('ROLLBACK');
         }
     }, 1000 * 60 * 60); // 1 hour
 });

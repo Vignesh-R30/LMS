@@ -41,7 +41,6 @@ const Members = () => {
                         <tr>
                             <th>Name</th>
                             <th>Email Address</th>
-                            <th>Date Joined</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -49,7 +48,6 @@ const Members = () => {
                             <tr key={lib.id}>
                                 <td><strong>{lib.name}</strong></td>
                                 <td>{lib.email}</td>
-                                <td>{lib.created_at ? String(lib.created_at).substring(0, 10) : 'N/A'}</td>
                             </tr>
                         )) : (
                             <tr>

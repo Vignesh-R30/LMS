@@ -42,7 +42,6 @@ const Students = () => {
                         <tr>
                             <th>Name</th>
                             <th>Email Address</th>
-                            <th>Date Joined</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -50,7 +49,6 @@ const Students = () => {
                             <tr key={student.id}>
                                 <td><strong>{student.name}</strong></td>
                                 <td>{student.email}</td>
-                                <td>{student.created_at ? String(student.created_at).substring(0, 10) : 'N/A'}</td>
                             </tr>
                         )) : (
                             <tr>

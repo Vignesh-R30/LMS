@@ -97,7 +97,7 @@ const login = async (req, res) => {
 const getUsersByRole = async (req, res) => {
     try {
         const { role } = req.params;
-        const result = await pool.query("SELECT id, name, email, created_at FROM users WHERE role = $1 ORDER BY created_at DESC", [role]);
+        const result = await pool.query("SELECT id, name, email FROM users WHERE role = $1 ORDER BY id DESC", [role]);
         res.json(result.rows);
     } catch (err) {
         console.error(err.message);

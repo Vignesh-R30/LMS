@@ -155,7 +155,7 @@ When you first launch the application, you can create a new account.
 **To become a Librarian (Admin):**
 1. Log in.
 2. Click the **"Switch Role"** button at the bottom of the sidebar.
-3. When prompted for the Admin Secret Key, enter: `admin123`.
+3. When prompted for the Admin Secret Key, enter: `lmsadmin`.
 4. You will instantly be upgraded to Librarian privileges.
 
 ---

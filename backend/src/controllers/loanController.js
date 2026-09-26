@@ -10,18 +10,12 @@ const getLoans = async (req, res) => {
             JOIN users u ON l.member_id = u.id
             ORDER BY l.loan_date DESC
         `;
-        const result = await pool.query(query);
-        
-        let loans = result.rows;
         if (req.user.role !== 'librarian') {
-            loans = loans.map(loan => ({
-                ...loan,
-                member_name: 'Hidden',
-                member_email: 'Hidden'
-            }));
+            return res.status(403).json({ message: "Access denied. Librarians only." });
         }
         
-        res.json(loans);
+        const result = await pool.query(query);
+        res.json(result.rows);
     } catch (err) {
         console.error(err.message);
         res.status(500).json({ message: "Server error fetching loans" });

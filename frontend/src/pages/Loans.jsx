@@ -16,6 +16,7 @@ const Loans = () => {
     });
 
     const fetchData = async () => {
+        if (user?.role !== 'librarian') return; // Don't fetch if not librarian
         try {
             // Fetch everything we need in parallel to load the page faster
             const [loansRes, booksRes, membersRes] = await Promise.all([
@@ -33,7 +34,7 @@ const Loans = () => {
 
     useEffect(() => {
         fetchData();
-    }, []);
+    }, [user]);
 
     const handleIssueBook = async (e) => {
         e.preventDefault();
@@ -56,6 +57,17 @@ const Loans = () => {
             alert(err.response?.data?.message || 'Error returning book');
         }
     };
+
+    if (user?.role !== 'librarian') {
+        return (
+            <div className="books-page" style={{ display: 'flex', justifyContent: 'center', alignItems: 'center', height: '60vh' }}>
+                <div style={{ textAlign: 'center', padding: '40px', background: 'rgba(30, 41, 59, 0.6)', borderRadius: '12px', border: '1px solid rgba(239, 68, 68, 0.3)' }}>
+                    <h2 style={{ color: '#EF4444', marginBottom: '15px' }}>Access Denied 🔒</h2>
+                    <p style={{ color: '#94A3B8', fontSize: '16px' }}>Only librarian can view and acces it</p>
+                </div>
+            </div>
+        );
+    }
 
     return (
         <div className="books-page">

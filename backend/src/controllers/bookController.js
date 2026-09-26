@@ -9,7 +9,7 @@ const getBooks = async (req, res) => {
 
         if (search) {
             queryParams.push(`%${search}%`);
-            query += ` AND (title ILIKE $${queryParams.length} OR author ILIKE $${queryParams.length} OR isbn ILIKE $${queryParams.length})`;
+            query += ` AND (title ILIKE $${queryParams.length} OR author ILIKE $${queryParams.length} OR isbn ILIKE $${queryParams.length} OR category ILIKE $${queryParams.length})`;
         }
         
         if (category) {

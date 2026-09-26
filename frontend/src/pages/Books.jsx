@@ -94,7 +94,7 @@ const Books = () => {
                 <form onSubmit={handleSearch}>
                     <input 
                         type="text" 
-                        placeholder="Search books by title, author, or ISBN..." 
+                        placeholder="Search books by title, author, category or ISBN..." 
                         value={search}
                         onChange={(e) => setSearch(e.target.value)}
                     />

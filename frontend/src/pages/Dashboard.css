@@ -104,3 +104,64 @@
   font-size: 28px;
   font-weight: 700;
 }
+
+/* --- MOBILE RESPONSIVENESS --- */
+@media (max-width: 768px) {
+  .dashboard-layout {
+    flex-direction: column;
+    height: 100vh; /* Stay full viewport height, let main scroll */
+  }
+
+  .sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--border-color);
+    padding: 10px;
+  }
+
+  .sidebar-header {
+    padding: 10px 16px;
+    text-align: center;
+  }
+
+  .sidebar-nav {
+    flex-direction: row;
+    flex-wrap: wrap;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px;
+  }
+
+  .nav-link {
+    padding: 8px 12px;
+    font-size: 13px;
+    white-space: nowrap;
+  }
+
+  .sidebar-footer {
+    padding: 10px 16px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .user-info {
+    margin-bottom: 0;
+  }
+  
+  .switch-role-button {
+    margin-bottom: 0 !important;
+    width: auto !important;
+    padding: 8px 12px !important;
+  }
+
+  .logout-button {
+    width: auto;
+    padding: 8px 16px;
+  }
+
+  .main-content {
+    padding: 20px 15px;
+  }
+}

@@ -8,6 +8,7 @@ import Home from './pages/Home';
 import Books from './pages/Books';
 import Members from './pages/Members';
 import Loans from './pages/Loans';
+import Students from './pages/Students';
 
 // A simple protected route wrapper
 const ProtectedRoute = ({ children }) => {
@@ -36,6 +37,7 @@ function App() {
         <Route path="books" element={<Books />} />
         <Route path="members" element={<Members />} />
         <Route path="loans" element={<Loans />} />
+        <Route path="students" element={<Students />} />
       </Route>
 
       {/* Redirect all unknown URLs to Dashboard */}

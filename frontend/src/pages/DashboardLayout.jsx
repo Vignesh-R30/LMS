@@ -42,7 +42,8 @@ const DashboardLayout = () => {
         <nav className="sidebar-nav">
           <Link to="/dashboard" className="nav-link">Home</Link>
           <Link to="/dashboard/books" className="nav-link">Books</Link>
-          <Link to="/dashboard/members" className="nav-link">Members</Link>
+          <Link to="/dashboard/members" className="nav-link">Librarians</Link>
+          <Link to="/dashboard/students" className="nav-link">Students</Link>
           <Link to="/dashboard/loans" className="nav-link">Loans</Link>
         </nav>
         <div className="sidebar-footer">

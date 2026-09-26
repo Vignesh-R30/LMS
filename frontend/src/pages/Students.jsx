@@ -3,28 +3,29 @@ import api from '../api';
 import { AuthContext } from '../context/AuthContext';
 import './Books.css'; 
 
-const Members = () => {
-    const [librarians, setLibrarians] = useState([]);
+const Students = () => {
+    const [students, setStudents] = useState([]);
     const { user } = useContext(AuthContext);
 
-    const fetchLibrarians = async () => {
+    const fetchStudents = async () => {
         try {
-            const res = await api.get('/auth/users/librarian');
-            setLibrarians(res.data);
+            const res = await api.get('/auth/users/member');
+            setStudents(res.data);
         } catch (err) {
-            console.error("Error fetching librarians", err);
+            console.error("Error fetching students", err);
         }
     };
 
     useEffect(() => {
-        fetchLibrarians();
+        fetchStudents();
     }, []);
 
+    // Only librarians should access this page
     if (user?.role !== 'librarian') {
         return (
             <div style={{ textAlign: 'center', marginTop: '50px', color: '#EF4444' }}>
                 <h2>Access Denied</h2>
-                <p>Only librarians can view the librarian access list.</p>
+                <p>Only librarians can view registered students.</p>
             </div>
         );
     }
@@ -32,7 +33,7 @@ const Members = () => {
     return (
         <div className="books-page">
             <div className="page-header">
-                <h1 className="page-title">Registered Librarians</h1>
+                <h1 className="page-title">Registered Students</h1>
             </div>
 
             <div className="table-container">
@@ -45,16 +46,16 @@ const Members = () => {
                         </tr>
                     </thead>
                     <tbody>
-                        {librarians.length > 0 ? librarians.map(lib => (
-                            <tr key={lib.id}>
-                                <td><strong>{lib.name}</strong></td>
-                                <td>{lib.email}</td>
-                                <td>{lib.created_at ? String(lib.created_at).substring(0, 10) : 'N/A'}</td>
+                        {students.length > 0 ? students.map(student => (
+                            <tr key={student.id}>
+                                <td><strong>{student.name}</strong></td>
+                                <td>{student.email}</td>
+                                <td>{student.created_at ? String(student.created_at).substring(0, 10) : 'N/A'}</td>
                             </tr>
                         )) : (
                             <tr>
                                 <td colSpan="3" className="empty-state">
-                                    No registered librarians found.
+                                    No registered students found.
                                 </td>
                             </tr>
                         )}
@@ -65,4 +66,4 @@ const Members = () => {
     );
 };
 
-export default Members;
+export default Students;

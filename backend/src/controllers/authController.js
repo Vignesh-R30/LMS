@@ -93,6 +93,18 @@ const login = async (req, res) => {
     }
 };
 
+// Get registered users by role (student or librarian)
+const getUsersByRole = async (req, res) => {
+    try {
+        const { role } = req.params;
+        const result = await pool.query("SELECT id, name, email, created_at FROM users WHERE role = $1 ORDER BY created_at DESC", [role]);
+        res.json(result.rows);
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Server error fetching users" });
+    }
+};
+
 // Switch role dynamically
 const switchRole = async (req, res) => {
     const { role, secretKey } = req.body;
@@ -144,4 +156,4 @@ const switchRole = async (req, res) => {
     }
 };
 
-module.exports = { register, login, switchRole };
+module.exports = { register, login, switchRole, getUsersByRole };

@@ -18,9 +18,22 @@ This project goes beyond simple CRUD operations by implementing **Role-Based Acc
 - **Role-Based Access Control:** Distinct `Librarian` (Admin) and `Student` (Member) privilege tiers.
 - **Dynamic Session Invalidation:** If an admin deletes a student's account, a custom middleware instantly intercepts active sessions and forces a logout.
 
-### 👥 User-Specific Dashboards
-- **Librarians:** Can manage the book catalog, monitor all active loans, manually issue/return books, and manage registered members.
-- **Students:** Can browse the catalog, view their own personalized dashboard of currently issued books, and see dynamic color-coded warnings (Green for safe, Orange for "Due Soon", Red for "Overdue").
+### 👥 Comprehensive Role Capabilities
+
+**👨‍🎓 Student (Member) Features:**
+- **Personalized Dashboard:** Instantly view all currently issued books upon login.
+- **Smart Due Date Alerts:** Books highlight in Orange when due within 3 days, and Red when overdue.
+- **Digital Reading:** One-click access to read digital copies (PDFs/Websites) of issued books directly from the dashboard.
+- **Library Catalog Access:** Search, filter, and browse the entire library's available book inventory.
+- **Real-Time Stock Checking:** See exactly how many physical/digital copies of a book are currently available.
+
+**👩‍🏫 Librarian (Admin) Features:**
+- **Master Dashboard:** Full oversight over the entire system.
+- **Inventory Management:** Add new books (with digital `read_links`), update existing book details, and safely delete books from the system.
+- **Loan Management:** Manually issue books to specific students, set custom due dates, and process book returns to instantly restock inventory.
+- **User Management (Students & Librarians):** View all registered students and librarians.
+- **Secure Moderation:** One-click deletion of any student or librarian account. If an active user is deleted, the system's security middleware instantly force-logs them out globally.
+- **Overdue Tracking:** Access specialized views to track all currently overdue loans across the entire system.
 
 ### 📖 Digital E-Library Integration
 - Books aren't limited to physical tracking. Librarians can attach a `read_link` to any book. When a book is issued, the student receives a secure **"📖 Read Book"** button on their dashboard to access the digital PDF/Website instantly.

@@ -38,7 +38,8 @@ app.get("/api/setup-database", async (req, res) => {
                 name VARCHAR(100) NOT NULL,
                 email VARCHAR(100) UNIQUE NOT NULL,
                 password VARCHAR(255) NOT NULL,
-                role VARCHAR(50) DEFAULT 'member'
+                role VARCHAR(50) DEFAULT 'member',
+                created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
             CREATE TABLE IF NOT EXISTS books (
                 id SERIAL PRIMARY KEY,
@@ -69,6 +70,20 @@ app.get("/api/setup-database", async (req, res) => {
     } catch (err) {
         console.error(err);
         res.status(500).send("Error creating tables: " + err.message);
+    }
+});
+
+// TEMPORARY UPGRADE ROUTE TO ADD CREATED_AT TO USERS TABLE
+app.get("/api/upgrade-database", async (req, res) => {
+    try {
+        const pool = require("./config/database");
+        await pool.query(`
+            ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+        `);
+        res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to your live cloud database.</p>");
+    } catch (err) {
+        console.error(err);
+        res.status(500).send("Error upgrading tables: " + err.message);
     }
 });
 

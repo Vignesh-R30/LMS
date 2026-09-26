@@ -1,8 +1,8 @@
 import axios from 'axios';
 
-// Create a central axios instance connected to your backend
+// Create a central axios instance connected to your live backend
 const api = axios.create({
-    baseURL: 'http://localhost:5000/api',
+    baseURL: 'https://lms-aifv.onrender.com/api',
 });
 
 // Automatically attach the JWT token to every request if the user is logged in

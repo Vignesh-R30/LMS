@@ -20,6 +20,16 @@ const Students = () => {
         fetchStudents();
     }, []);
 
+    const handleDeleteStudent = async (id) => {
+        if (!window.confirm("Are you sure you want to permanently remove this student?")) return;
+        try {
+            await api.delete(`/auth/users/${id}`);
+            fetchStudents(); // Refresh list
+        } catch (err) {
+            alert(err.response?.data?.message || 'Error removing student');
+        }
+    };
+
     // Only librarians should access this page
     if (user?.role !== 'librarian') {
         return (
@@ -43,6 +53,7 @@ const Students = () => {
                             <th>Name</th>
                             <th>Email Address</th>
                             <th>Date Joined</th>
+                            <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -51,10 +62,13 @@ const Students = () => {
                                 <td><strong>{student.name}</strong></td>
                                 <td>{student.email}</td>
                                 <td>{student.created_at ? String(student.created_at).substring(0, 10) : 'N/A'}</td>
+                                <td>
+                                    <button className="delete-button" onClick={() => handleDeleteStudent(student.id)}>Remove</button>
+                                </td>
                             </tr>
                         )) : (
                             <tr>
-                                <td colSpan="3" className="empty-state">
+                                <td colSpan="4" className="empty-state">
                                     No registered students found.
                                 </td>
                             </tr>

@@ -46,7 +46,8 @@ app.get("/api/setup-database", async (req, res) => {
                 title VARCHAR(255) NOT NULL,
                 author VARCHAR(255) NOT NULL,
                 isbn VARCHAR(100) UNIQUE,
-                published_year INT,
+                category VARCHAR(100),
+                quantity INT DEFAULT 1,
                 available_quantity INT DEFAULT 1,
                 created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP
             );
@@ -73,14 +74,16 @@ app.get("/api/setup-database", async (req, res) => {
     }
 });
 
-// TEMPORARY UPGRADE ROUTE TO ADD CREATED_AT TO USERS TABLE
+// TEMPORARY UPGRADE ROUTE TO ADD CREATED_AT TO USERS TABLE AND FIX BOOKS TABLE
 app.get("/api/upgrade-database", async (req, res) => {
     try {
         const pool = require("./config/database");
         await pool.query(`
             ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
+            ALTER TABLE books ADD COLUMN IF NOT EXISTS category VARCHAR(100);
+            ALTER TABLE books ADD COLUMN IF NOT EXISTS quantity INT DEFAULT 1;
         `);
-        res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to your live cloud database.</p>");
+        res.send("<h1>Database Upgraded Successfully! 🎉</h1><p>The Date Joined column has been added to users, and the Books table has been fixed.</p>");
     } catch (err) {
         console.error(err);
         res.status(500).send("Error upgrading tables: " + err.message);

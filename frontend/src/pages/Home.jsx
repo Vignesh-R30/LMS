@@ -70,6 +70,21 @@ const Home = () => {
                                             <div style={{ fontSize: '13px', color: '#94A3B8', marginTop: '4px' }}>
                                                 Issued: {new Date(loan.loan_date).toLocaleDateString()}
                                             </div>
+                                            {loan.read_link && (
+                                                <a href={loan.read_link} target="_blank" rel="noopener noreferrer" style={{
+                                                    display: 'inline-block',
+                                                    marginTop: '8px',
+                                                    padding: '4px 10px',
+                                                    background: '#3B82F6',
+                                                    color: '#fff',
+                                                    textDecoration: 'none',
+                                                    borderRadius: '4px',
+                                                    fontSize: '12px',
+                                                    fontWeight: 'bold'
+                                                }}>
+                                                    📖 Read Book
+                                                </a>
+                                            )}
                                         </div>
                                         <div style={{ textAlign: 'right', fontSize: '14px' }}>
                                             <div style={{ color: isOverdue ? '#EF4444' : (isDueSoon ? '#F97316' : '#fff') }}>

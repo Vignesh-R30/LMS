@@ -46,11 +46,11 @@ const addBook = async (req, res) => {
         return res.status(403).json({ message: "Access denied. Librarians only." });
     }
 
-    const { title, author, isbn, category, quantity } = req.body;
+    const { title, author, isbn, category, quantity, read_link } = req.body;
     try {
         const newBook = await pool.query(
-            "INSERT INTO books (title, author, isbn, category, quantity, available_quantity) VALUES ($1, $2, $3, $4, $5, $5) RETURNING *",
-            [title, author, isbn, category, quantity]
+            "INSERT INTO books (title, author, isbn, category, quantity, available_quantity, read_link) VALUES ($1, $2, $3, $4, $5, $5, $6) RETURNING *",
+            [title, author, isbn, category, quantity, read_link]
         );
         res.status(201).json(newBook.rows[0]);
     } catch (err) {
@@ -69,7 +69,7 @@ const updateBook = async (req, res) => {
     }
 
     const { id } = req.params;
-    const { title, author, isbn, category, quantity } = req.body;
+    const { title, author, isbn, category, quantity, read_link } = req.body;
 
     try {
         // Find existing book to calculate available_quantity difference
@@ -90,8 +90,8 @@ const updateBook = async (req, res) => {
         }
 
         const updatedBook = await pool.query(
-            "UPDATE books SET title = $1, author = $2, isbn = $3, category = $4, quantity = $5, available_quantity = $6 WHERE id = $7 RETURNING *",
-            [title, author, isbn, category, quantity, newAvailable, id]
+            "UPDATE books SET title = $1, author = $2, isbn = $3, category = $4, quantity = $5, available_quantity = $6, read_link = $7 WHERE id = $8 RETURNING *",
+            [title, author, isbn, category, quantity, newAvailable, read_link, id]
         );
 
         res.json(updatedBook.rows[0]);

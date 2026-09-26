@@ -140,7 +140,7 @@ const getOverdueBooks = async (req, res) => {
 const getMyLoans = async (req, res) => {
     try {
         const query = `
-            SELECT l.*, b.title as book_title
+            SELECT l.*, b.title as book_title, b.read_link
             FROM loans l
             JOIN books b ON l.book_id = b.id
             WHERE l.member_id = $1 AND l.status = 'issued'

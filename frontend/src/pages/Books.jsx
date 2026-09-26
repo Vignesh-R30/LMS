@@ -11,7 +11,7 @@ const Books = () => {
     // Form state for adding new books
     const [showForm, setShowForm] = useState(false);
     const [formData, setFormData] = useState({
-        title: '', author: '', isbn: '', category: '', quantity: 1
+        title: '', author: '', isbn: '', category: '', quantity: 1, read_link: ''
     });
 
     // Fetch books from the backend API
@@ -39,7 +39,7 @@ const Books = () => {
         try {
             await api.post('/books', formData);
             setShowForm(false);
-            setFormData({ title: '', author: '', isbn: '', category: '', quantity: 1 });
+            setFormData({ title: '', author: '', isbn: '', category: '', quantity: 1, read_link: '' });
             fetchBooks(search); // Refresh the list after adding
         } catch (err) {
             alert(err.response?.data?.message || 'Error adding book');
@@ -80,6 +80,8 @@ const Books = () => {
                             value={formData.isbn} onChange={e => setFormData({...formData, isbn: e.target.value})} />
                         <input type="text" placeholder="Category"
                             value={formData.category} onChange={e => setFormData({...formData, category: e.target.value})} />
+                        <input type="url" placeholder="Website / Read Link (Optional)"
+                            value={formData.read_link} onChange={e => setFormData({...formData, read_link: e.target.value})} />
                         <input type="number" placeholder="Quantity" min="1" required
                             value={formData.quantity} onChange={e => setFormData({...formData, quantity: e.target.value})} />
                         <button type="submit" className="primary-button">Save Book</button>

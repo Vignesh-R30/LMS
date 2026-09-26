@@ -74,6 +74,7 @@ app.get("/api/upgrade-database", async (req, res) => {
             ALTER TABLE users ADD COLUMN IF NOT EXISTS created_at TIMESTAMP DEFAULT CURRENT_TIMESTAMP;
             ALTER TABLE books ADD COLUMN IF NOT EXISTS category VARCHAR(100);
             ALTER TABLE books ADD COLUMN IF NOT EXISTS quantity INT DEFAULT 1;
+            ALTER TABLE books ADD COLUMN IF NOT EXISTS read_link VARCHAR(500);
             
             ALTER TABLE loans DROP CONSTRAINT IF EXISTS loans_member_id_fkey;
             ALTER TABLE loans ADD CONSTRAINT loans_member_id_fkey FOREIGN KEY (member_id) REFERENCES users(id) ON DELETE CASCADE;

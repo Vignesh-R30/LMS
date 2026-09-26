@@ -4,12 +4,33 @@ import { AuthContext } from '../context/AuthContext';
 import './Dashboard.css';
 
 const DashboardLayout = () => {
-  const { user, logout } = useContext(AuthContext);
+  const { user, logout, switchRole } = useContext(AuthContext);
   const navigate = useNavigate();
 
   const handleLogout = () => {
     logout();
     navigate('/login');
+  };
+
+  const handleSwitchRole = async () => {
+    try {
+      if (user?.role === 'librarian') {
+        // Switch down to student
+        if(window.confirm("Are you sure you want to drop your admin privileges and switch to a student view?")) {
+            await switchRole('member', '');
+            window.location.reload();
+        }
+      } else {
+        // Switch up to librarian
+        const secret = window.prompt("Enter Librarian Secret Key to upgrade your privileges:");
+        if (secret) {
+            await switchRole('librarian', secret);
+            window.location.reload();
+        }
+      }
+    } catch (err) {
+      alert(err.response?.data?.message || 'Failed to switch role');
+    }
   };
 
   return (
@@ -29,6 +50,18 @@ const DashboardLayout = () => {
             <span className="user-name">{user?.name}</span>
             <span className="user-role">{user?.role}</span>
           </div>
+          <button onClick={handleSwitchRole} className="switch-role-button" style={{
+              background: 'rgba(255, 255, 255, 0.1)', 
+              color: 'white', 
+              border: 'none', 
+              padding: '8px', 
+              borderRadius: '6px', 
+              marginBottom: '10px', 
+              cursor: 'pointer',
+              width: '100%'
+          }}>
+            Switch to {user?.role === 'librarian' ? 'Student' : 'Librarian'}
+          </button>
           <button onClick={handleLogout} className="logout-button">Logout</button>
         </div>
       </aside>

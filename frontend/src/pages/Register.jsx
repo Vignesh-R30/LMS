@@ -28,38 +28,38 @@ const Register = () => {
             <div className="auth-card">
                 <h1 className="auth-title">Create Account</h1>
                 <p className="auth-subtitle">Join the Library Management System</p>
-                
+
                 {error && <div className="error-message">{error}</div>}
-                
+
                 <form onSubmit={handleSubmit}>
                     <div className="input-group">
                         <label>Full Name</label>
-                        <input 
-                            type="text" 
-                            placeholder="John Doe" 
+                        <input
+                            type="text"
+                            placeholder="John Doe"
                             value={name}
                             onChange={(e) => setName(e.target.value)}
-                            required 
+                            required
                         />
                     </div>
                     <div className="input-group">
                         <label>Email Address</label>
-                        <input 
-                            type="email" 
-                            placeholder="john@example.com" 
+                        <input
+                            type="email"
+                            placeholder="john@example.com"
                             value={email}
                             onChange={(e) => setEmail(e.target.value)}
-                            required 
+                            required
                         />
                     </div>
                     <div className="input-group">
                         <label>Password</label>
-                        <input 
-                            type="password" 
-                            placeholder="••••••••" 
+                        <input
+                            type="password"
+                            placeholder="••••••••"
                             value={password}
                             onChange={(e) => setPassword(e.target.value)}
-                            required 
+                            required
                         />
                     </div>
                     <div className="input-group">
@@ -69,21 +69,21 @@ const Register = () => {
                             <option value="librarian">Librarian</option>
                         </select>
                     </div>
-                    
+
                     {/* Conditionally show the Secret Key field if Librarian is selected */}
                     {role === 'librarian' && (
                         <div className="input-group" style={{ animation: 'fadeIn 0.3s' }}>
                             <label>Librarian Secret Key</label>
-                            <input 
-                                type="password" 
-                                placeholder="Enter admin key" 
+                            <input
+                                type="password"
+                                placeholder="Enter admin key"
                                 value={secretKey}
                                 onChange={(e) => setSecretKey(e.target.value)}
-                                required 
+                                required
                             />
                         </div>
                     )}
-                    
+
                     <button type="submit" className="auth-button">Register</button>
                 </form>
 

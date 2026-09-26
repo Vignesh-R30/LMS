@@ -24,6 +24,14 @@ export const AuthProvider = ({ children }) => {
         return response.data.user;
     };
 
+    const switchRole = async (role, secretKey) => {
+        const response = await api.put('/auth/switch-role', { role, secretKey });
+        localStorage.setItem('token', response.data.token);
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+        setUser(response.data.user);
+        return response.data.user;
+    };
+
     const register = async (name, email, password, role, secretKey) => {
         await api.post('/auth/register', { name, email, password, role, secretKey });
     };
@@ -35,7 +43,7 @@ export const AuthProvider = ({ children }) => {
     };
 
     return (
-        <AuthContext.Provider value={{ user, loading, login, register, logout }}>
+        <AuthContext.Provider value={{ user, loading, login, register, logout, switchRole }}>
             {children}
         </AuthContext.Provider>
     );

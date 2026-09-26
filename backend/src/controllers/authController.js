@@ -93,4 +93,55 @@ const login = async (req, res) => {
     }
 };
 
-module.exports = { register, login };
+// Switch role dynamically
+const switchRole = async (req, res) => {
+    const { role, secretKey } = req.body;
+    const userId = req.user.id;
+
+    try {
+        if (role === 'librarian') {
+            if (secretKey !== process.env.LIBRARIAN_SECRET) {
+                return res.status(403).json({ message: "Invalid Librarian Secret Key" });
+            }
+        }
+
+        // Update database
+        const updateResult = await pool.query(
+            "UPDATE users SET role = $1 WHERE id = $2 RETURNING id, name, email, role",
+            [role, userId]
+        );
+
+        if (updateResult.rows.length === 0) {
+            return res.status(404).json({ message: "User not found" });
+        }
+
+        const updatedUser = updateResult.rows[0];
+
+        // Generate new JWT Token
+        const payload = {
+            user: {
+                id: updatedUser.id,
+                role: updatedUser.role
+            }
+        };
+
+        jwt.sign(
+            payload,
+            process.env.JWT_SECRET,
+            { expiresIn: '1d' },
+            (err, token) => {
+                if (err) throw err;
+                res.json({
+                    token,
+                    user: updatedUser
+                });
+            }
+        );
+
+    } catch (err) {
+        console.error(err.message);
+        res.status(500).json({ message: "Server error during role switch" });
+    }
+};
+
+module.exports = { register, login, switchRole };
